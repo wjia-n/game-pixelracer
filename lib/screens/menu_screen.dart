@@ -770,12 +770,12 @@ void paintPixelCar(
     [44.0, 22.0, -6.0, 12.0, 1.0, 5.0], // Speedster
   ];
   final r = recipes[style.clamp(0, 7)];
-  final len = (r[0] as double) * scale;
-  final wid = (r[1] as double) * scale;
-  final cabX = (r[2] as double) * scale;
-  final cabW = (r[3] as double) * scale;
-  final spoiler = (r[4] as double) > 0.5;
-  final wheelR = (r[5] as double) * scale;
+  final len = r[0] * scale;
+  final wid = r[1] * scale;
+  final cabX = r[2] * scale;
+  final cabW = r[3] * scale;
+  final spoiler = r[4] > 0.5;
+  final wheelR = r[5] * scale;
 
   final wheel = Paint()..color = const Color(0xFF1E1E1E);
   final hub = Paint()..color = const Color(0xFF9A9A9A);

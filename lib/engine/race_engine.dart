@@ -101,7 +101,6 @@ class RaceEngine extends ChangeNotifier {
   final List<Offset> trackPoints = [];
   final List<RacerState> racers = [];
   double countdown = 0;
-  int _countdownShown = 4;
   int placesGiven = 0;
   bool get isRaceOver => _phase == RacePhase.finished;
 
@@ -157,7 +156,6 @@ class RaceEngine extends ChangeNotifier {
       racers.add(r);
     }
     countdown = 3.0;
-    _countdownShown = 4;
     _phase = RacePhase.countdown;
     _armTimers();
     notifyListeners();
@@ -190,11 +188,11 @@ class RaceEngine extends ChangeNotifier {
       final a = i / trackSamples * math.pi * 2;
       final r = 330 *
           (1 +
-              (rc[0] as double) * math.sin((rc[1] as double) * a + wobble + (rc[2] as double)) +
-              (rc[3] as double) * math.sin((rc[4] as double) * a + (rc[5] as double)));
+              rc[0] * math.sin(rc[1] * a + wobble + rc[2]) +
+              rc[3] * math.sin(rc[4] * a + rc[5]));
       trackPoints.add(Offset(
         500 + r * math.cos(a),
-        500 + r * math.sin(a) * (rc[6] as double),
+        500 + r * math.sin(a) * rc[6],
       ));
     }
   }
