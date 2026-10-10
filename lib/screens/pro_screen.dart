@@ -30,7 +30,6 @@ class _ProScreenState extends State<ProScreen> {
 
   Future<void> _init() async {
     await _store.init();
-    _store.proPurchased.addListener(_onProPurchased);
     // If the user already owned Pro (restored purchase), reflect it.
     if (_store.proPurchased.value && !widget.settings.isPro) {
       await widget.settings.setPro(true);
@@ -38,7 +37,6 @@ class _ProScreenState extends State<ProScreen> {
     if (mounted) setState(() => _loading = false);
   }
 
-  Future<void> _onProPurchased() async {
     if (_store.proPurchased.value && !widget.settings.isPro) {
       await widget.settings.setPro(true);
       if (mounted) setState(() {});
@@ -47,7 +45,6 @@ class _ProScreenState extends State<ProScreen> {
 
   @override
   void dispose() {
-    _store.proPurchased.removeListener(_onProPurchased);
     _store.dispose();
     super.dispose();
   }
