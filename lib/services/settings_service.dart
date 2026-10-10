@@ -74,7 +74,7 @@ class RacerSettings extends ChangeNotifier {
   int wins = 0;
   int bestLapMs = 0;
   int endlessBestM = 0;
-  bool isPro = false;
+  bool isPro = true; // everything unlocked — no Pro version
 
   /// Custom theme colors (ARGB ints). Defaults mirror Arcade Classic.
   Map<String, int> customColors = Map.of(_defaultCustomColors);
@@ -154,7 +154,7 @@ class RacerSettings extends ChangeNotifier {
     wins = p.getInt(_kWins) ?? 0;
     bestLapMs = p.getInt(_kBestLap) ?? 0;
     endlessBestM = p.getInt(_kEndlessBest) ?? 0;
-    isPro = p.getBool(_kIsPro) ?? false;
+    isPro = true; // everything unlocked
     for (final k in _defaultCustomColors.keys) {
       customColors[k] = p.getInt('$_kCustomPrefix$k') ?? _defaultCustomColors[k]!;
     }
