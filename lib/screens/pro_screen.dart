@@ -30,17 +30,9 @@ class _ProScreenState extends State<ProScreen> {
 
   Future<void> _init() async {
     await _store.init();
-    // If the user already owned Pro (restored purchase), reflect it.
-    if (_store.proPurchased.value && !widget.settings.isPro) {
-      await widget.settings.setPro(true);
-    }
     if (mounted) setState(() => _loading = false);
   }
 
-    if (_store.proPurchased.value && !widget.settings.isPro) {
-      await widget.settings.setPro(true);
-      if (mounted) setState(() {});
-    }
   }
 
   @override
