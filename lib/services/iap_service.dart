@@ -127,4 +127,6 @@ class RacerStore {
     purchaseInProgress.dispose();
     purchaseError.dispose();
   }
+
+  Future<void> buyPro() async {}
 }

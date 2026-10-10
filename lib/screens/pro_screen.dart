@@ -33,8 +33,6 @@ class _ProScreenState extends State<ProScreen> {
     if (mounted) setState(() => _loading = false);
   }
 
-  }
-
   @override
   void dispose() {
     _store.dispose();
