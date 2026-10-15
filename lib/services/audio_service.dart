@@ -15,6 +15,9 @@ import 'package:audioplayers/audioplayers.dart';
 /// - An engine loop (separate player) follows race speed with playback rate.
 /// - Every public method catches player errors; audio can never crash the app.
 class RacerAudio {
+  /// Per-game pitch character (pixelracer): 0.95x. Makes SFX unique.
+  static const double _pitchMul = 0.950;
+
   static const int _rate = 22050;
   final AudioPlayer _sfx = AudioPlayer();
   final AudioPlayer _music = AudioPlayer();
@@ -137,50 +140,60 @@ class RacerAudio {
     return out;
   }
 
+  /// Soft synth pad from a chord (shared helper).
+  List<double> _padChord(List<double> freqs, double secs) {
+    final n = (_rate * secs).round();
+    final out = List<double>.filled(n, 0);
+    for (int i = 0; i < n; i++) {
+      final t = i / _rate;
+      final env = (1 - exp(-t * 3)) * exp(-t * 0.4);
+      double s = 0;
+      for (final f in freqs) {
+        s += sin(2 * pi * f * t) + 0.35 * sin(2 * pi * f * 2 * t);
+      }
+      out[i] = s / freqs.length * env * 0.45;
+    }
+    return out;
+  }
+
   Uint8List _clip(String key, List<double> Function() build) =>
       _cache.putIfAbsent(key, () => _wav(build()));
 
   // ------------------------------------------------------- music synthesis
   Uint8List _menuBytes() => _clip('music_menu', () {
-        // Cheerful chiptune loop: C major bouncy bass + melody, 8s.
-        final bass = [130.81, 130.81, 196.0, 196.0, 174.61, 174.61, 196.0, 196.0];
-        final lead = [
-          523.25, 587.33, 659.25, 783.99,
-          659.25, 587.33, 523.25, 392.0,
+        // D 0 – 2 – 5 – 4 warm pad, 16s loop. Unique to pixelracer.
+        final seq = [
+          [146.83, 184.99, 220.00],
+          [184.99, 220.00, 277.18],
+          [246.94, 293.66, 369.99],
+          [220.00, 277.18, 329.62]
         ];
-        final step = 0.5;
-        var out = <double>[];
-        for (int k = 0; k < bass.length; k++) {
-          final b = _chip(bass[k], step, duty: 0.35);
-          final l = _chip(lead[k], step, duty: 0.5);
-          for (int i = 0; i < b.length; i++) {
-            b[i] = b[i] * 0.5 + l[i] * 0.5;
-          }
-          out.addAll(b);
+        final out = <double>[];
+        for (final chord in seq) {
+          out.addAll(_padChord(chord, 4.0));
         }
-        // Double it to 8s.
-        return [...out, ...out];
+        return out;
       });
 
+
   Uint8List _gameBytes() => _clip('music_game', () {
-        // Fast driving chiptune: E minor power bass + riff, 8s loop.
-        final bass = [82.41, 82.41, 123.47, 82.41, 98.0, 98.0, 123.47, 146.83];
-        final lead = [
-          329.63, 392.0, 493.88, 392.0,
-          329.63, 293.66, 246.94, 293.66,
-        ];
-        final step = 0.5;
-        var out = <double>[];
-        for (int k = 0; k < bass.length; k++) {
-          final b = _chip(bass[k], step, duty: 0.35);
-          final l = _chip(lead[k], step * 0.95, duty: 0.5);
-          for (int i = 0; i < b.length; i++) {
-            b[i] = b[i] * 0.55 + l[i] * 0.45;
-          }
-          out.addAll(b);
+        // D arpeggiated 0 – 2 – 5 – 4, 16s loop. Unique to pixelracer.
+        final notes = [146.83, 184.99, 220.00, 184.99, 184.99, 220.00, 277.18, 220.00, 246.94, 293.66, 369.99, 293.66, 220.00, 277.18, 329.62, 277.18];
+        final out = <double>[];
+        final noteLen = 16.0 / notes.length;
+        for (final n in notes) {
+          out.addAll(_chip(n, noteLen * 0.9));
+          final gap = List<double>.filled((_rate * noteLen * 0.1).round(), 0);
+          out.addAll(gap);
         }
-        return [...out, ...out];
+        // Soft pad underneath
+        final pad = _padChord([146.83, 184.99, 220.00], 16.0);
+        for (int i = 0; i < out.length && i < pad.length; i++) {
+          out[i] += pad[i] * 0.3;
+        }
+        return out;
       });
+
 
   /// Engine loop: gritty low buzz, pitched up/down via playback rate.
   Uint8List _engineBytes() => _clip('engine', () {
