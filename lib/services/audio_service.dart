@@ -15,8 +15,6 @@ import 'package:audioplayers/audioplayers.dart';
 /// - An engine loop (separate player) follows race speed with playback rate.
 /// - Every public method catches player errors; audio can never crash the app.
 class RacerAudio {
-  /// Per-game pitch character (pixelracer): 0.95x. Makes SFX unique.
-  static const double _pitchMul = 0.950;
 
   static const int _rate = 22050;
   final AudioPlayer _sfx = AudioPlayer();
