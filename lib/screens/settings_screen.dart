@@ -3,6 +3,7 @@ import '../services/audio_service.dart';
 import '../services/settings_service.dart';
 import '../theme/pixel_themes.dart';
 import 'name_field.dart';
+import '../transfer/transfer_ui.dart';
 
 /// Settings: audio toggles + volume, driver names, credits.
 class SettingsScreen extends StatelessWidget {
@@ -33,6 +34,7 @@ class SettingsScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+              TransferSaveTile(gameSlug: 'pixelracer'),
                 PixelUi.panel(
                   theme: theme,
                   child: Column(
