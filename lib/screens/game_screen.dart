@@ -552,8 +552,8 @@ class _GameScreenState extends State<GameScreen>
                         color: const Color(0xFF2B6CE0),
                         onTap: () {
                           audio.click();
-                          Share.share(
-                              'I just raced in Pixel Racer! Tiny cars, massive drifts — try to beat me: $_shareUrl');
+                          SharePlus.instance.share(ShareParams(
+                              text: 'I just raced in Pixel Racer! Tiny cars, massive drifts — try to beat me: $_shareUrl'));
                         }),
                     if (!s.isPro)
                       PixelUi.button(
