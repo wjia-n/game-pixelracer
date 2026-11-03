@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../engine/race_engine.dart';
 import '../services/audio_service.dart';
@@ -155,7 +156,7 @@ class _MenuScreenState extends State<MenuScreen> {
                     Expanded(
                       child: PixelUi.button(
                         theme: theme,
-                        text: s.isPro ? 'PRO ★' : 'GET PRO',
+                        text: defaultTargetPlatform == TargetPlatform.iOS ? '⭐ GOLD STAR' : (s.isPro ? 'PRO ★' : 'GET PRO'),
                         color: const Color(0xFFB98A2B),
                         small: true,
                         onTap: () {

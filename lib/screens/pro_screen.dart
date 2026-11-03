@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import '../services/audio_service.dart';
@@ -41,6 +42,9 @@ class _ProScreenState extends State<ProScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
+      return _IosGoldStarScreen(store: _store);
+    }
     final theme = PixelThemes.byId(
       widget.settings.themeId,
       custom: widget.settings.customTheme,
@@ -287,6 +291,75 @@ class _ProScreenState extends State<ProScreen> {
           'Restore purchases',
           style: PixelUi.label(14, theme: theme,
               color: theme.accent),
+        ),
+      ),
+    );
+  }
+}
+// ---------------------------------------------------------------------------
+/// iOS-only Gold Star screen: exactly one button, plus a badge once owned.
+/// The game stays fully unlocked; the star is cosmetic only.
+/// Android keeps the original screen below, byte-identical.
+class _IosGoldStarScreen extends StatelessWidget {
+  final RacerStore store;
+  const _IosGoldStarScreen({required this.store});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: const Text('Gold Star'),
+        centerTitle: true,
+      ),
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 14),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text('⭐', style: TextStyle(fontSize: 56)),
+                const SizedBox(height: 12),
+                const Text(
+                  'This game is fully unlocked.',
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 8),
+                ValueListenableBuilder<bool>(
+                  valueListenable: store.goldStarOwned,
+                  builder: (_, owned, _) => Text(
+                    owned
+                        ? '⭐ Gold Star earned — thank you!'
+                        : 'Get a Gold Star to show your support!',
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                if (!store.storeReady)
+                  Text(store.error ?? 'Available after store setup.',
+                      textAlign: TextAlign.center)
+                else if (store.starProduct == null)
+                  const Text('Gold Star coming soon.',
+                      textAlign: TextAlign.center)
+                else
+                  ValueListenableBuilder<bool>(
+                    valueListenable: store.goldStarOwned,
+                    builder: (_, owned, _) => owned
+                        ? const Text('⭐', style: TextStyle(fontSize: 48))
+                        : ElevatedButton(
+                            onPressed: () =>
+                                store.buyStar(store.starProduct!),
+                            child: Text(
+                                '⭐ Gold Star ${store.starProduct!.price}'),
+                          ),
+                  ),
+              ],
+            ),
+          ),
         ),
       ),
     );
