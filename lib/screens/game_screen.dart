@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math' as math;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:share_plus/share_plus.dart';
@@ -558,7 +559,9 @@ class _GameScreenState extends State<GameScreen>
                     if (!s.isPro)
                       PixelUi.button(
                           theme: theme,
-                          text: 'GET PRO',
+                          text: defaultTargetPlatform == TargetPlatform.iOS
+                              ? '⭐ GOLD STAR'
+                              : 'GET PRO',
                           small: true,
                           color: const Color(0xFFB98A2B),
                           onTap: () {

@@ -334,7 +334,7 @@ class _IosGoldStarScreen extends StatelessWidget {
                   builder: (_, owned, _) => Text(
                     owned
                         ? '⭐ Gold Star earned — thank you!'
-                        : 'Get a Gold Star to show your support!',
+                        : 'Get a Gold Star!',
                     textAlign: TextAlign.center,
                   ),
                 ),
